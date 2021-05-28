@@ -99,4 +99,17 @@ public class ArticleController {
 		return "redirect:";
 	}
 
+	/**
+	 * 記事とコメントを削除するメソッド.
+	 * 
+	 * @param articleId 削除したい記事のID
+	 * @return 掲示板
+	 */
+	@RequestMapping("/delete")
+	public String deleteArticle(String articleId) {
+		Integer id = Integer.parseInt(articleId);
+		commentRepository.deleteByArticleId(id);
+		articleRepository.deleteById(id);
+		return "redirect:";
+	}
 }

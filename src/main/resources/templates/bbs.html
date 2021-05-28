@@ -16,6 +16,7 @@
 	投稿内容：<br>
 	<span th:text="${article.content}"></span><br>	
 	<form th:action="@{/bbs/delete}">
+		<input type="hidden" name="articleId" th:value="${article.id}">
 		<button>記事削除</button>
 	</form>
 	<div th:each="comment : ${article.commentList}">

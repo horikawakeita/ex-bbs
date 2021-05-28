@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 //import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -57,6 +58,17 @@ public class ArticleRepository {
 		SqlParameterSource param = new BeanPropertySqlParameterSource(article);
 		String sql = "insert into " + TABLE + "(name,content) values(:name,:content);";
 //		SqlParameterSource param = new MapSqlParameterSource().addValue("name", article.getName()).addValue("content", article.getContent());
+		template.update(sql, param);
+	}
+	
+	/**
+	 * 指定されたIDの記事を削除するメソッド.
+	 * 
+	 * @param id 記事ID
+	 */
+	public void deleteById(int id) {
+		String sql = "delete from " + TABLE + " where id=:id";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 		template.update(sql, param);
 	}
 }
