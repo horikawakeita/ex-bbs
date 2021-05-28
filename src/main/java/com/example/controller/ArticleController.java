@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.domain.Article;
 import com.example.form.ArticleForm;
 import com.example.repository.ArticleRepository;
+import com.example.repository.CommentRepository;
 
 /**
  * 記事関連機能の処理の制御を行うコントローラ.
@@ -22,7 +25,10 @@ public class ArticleController {
 
 	/** リポジトリ */
 	@Autowired
-	private ArticleRepository repository;
+	private ArticleRepository articleRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 	
 	/**
 	 * ArticleFormオブジェクトをrequestスコープに格納.
@@ -42,7 +48,11 @@ public class ArticleController {
 	 */
 	@RequestMapping("")
 	public String showBbs(Model model) {
-		model.addAttribute("articleList", repository.findAll());		
+		List<Article> articleList = articleRepository.findAll();
+		for(Article article : articleList) {
+			article.setCommentList(commentRepository.findByArticleId(article.getId()));
+		}
+		model.addAttribute("articleList", articleList);		
 		return "bbs";
 	}
 	
@@ -57,8 +67,8 @@ public class ArticleController {
 	public String insertArticle(ArticleForm form, Model model) {
 		Article article = new Article();
 		BeanUtils.copyProperties(form, article);
-		repository.insert(article);
-		return showBbs(model);
+		articleRepository.insert(article);
+		return "redirect:";
 	}
 
 }
