@@ -9,7 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.domain.Article;
+import com.example.domain.Comment;
 import com.example.form.ArticleForm;
+import com.example.form.CommentForm;
 import com.example.repository.ArticleRepository;
 import com.example.repository.CommentRepository;
 
@@ -41,6 +43,16 @@ public class ArticleController {
 	}
 	
 	/**
+	 * CommentFormオブジェクトをrequestスコープに格納.
+	 * 
+	 * @return CommentFormオブジェクト
+	 */
+	@Autowired
+	public CommentForm setUpCommentForm() {
+		return new CommentForm();
+	}
+	
+	/**
 	 * 記事全件を表示するメソッド.
 	 * 
 	 * @param model requestスコープに格納するためのオブジェクト
@@ -68,6 +80,22 @@ public class ArticleController {
 		Article article = new Article();
 		BeanUtils.copyProperties(form, article);
 		articleRepository.insert(article);
+		return "redirect:";
+	}
+	
+	/**
+	 * 新規コメントをDBに登録するメソッド.
+	 * 
+	 * @param form 入力された名前と内容を持ったフォーム
+	 * @param model requestスコープに格納するためのオブジェクト
+	 * @return 掲示板
+	 */
+	@RequestMapping("/insert-comment")
+	public String insertComment(CommentForm form, Model model) {
+		Comment comment = new Comment();
+		BeanUtils.copyProperties(form, comment);
+		comment.setArticleId(Integer.parseInt(form.getArticleId()));
+		commentRepository.insert(comment);
 		return "redirect:";
 	}
 

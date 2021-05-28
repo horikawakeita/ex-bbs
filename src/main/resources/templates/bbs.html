@@ -18,6 +18,20 @@
 	<form th:action="@{/bbs/delete}">
 		<button>記事削除</button>
 	</form>
+	<div th:each="comment : ${article.commentList}">
+		コメント者名：<span th:text="${comment.name}"></span><br>
+		コメント内容：<br>
+		<span th:text="${comment.content}"></span>
+		<br>
+	</div>
+	<form th:action="@{/bbs/insert-comment}" method="post">
+		名前：<br>
+		<input type="text" name="name"><br>
+		コメント：<br>
+		<textarea name="content"></textarea><br>
+		<input type="hidden" name="articleId" th:value="${article.id}">
+		<button>コメント投稿</button>
+	</form>
 </div>
 </body>
 </html>
