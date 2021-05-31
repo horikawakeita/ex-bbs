@@ -36,29 +36,27 @@ public class ArticleRepository {
 	/** resultsetにテーブル全てをセットして処理する変数 */
 	private static final ResultSetExtractor<List<Article>> ARTICLE_RSE = (rs) -> {
 		List<Article> articleList = new ArrayList<>();
+		List<Comment> commentList = null;
+		int beforeId = 0;
 		while (rs.next()) {
-			if (articleList.isEmpty() || articleList.get(articleList.size() - 1).getId() != rs.getInt("id")) {
+			if (beforeId != rs.getInt("id")) {
 				Article article = new Article();
 				article.setId(rs.getInt("id"));
 				article.setName(rs.getString("name"));
 				article.setContent(rs.getString("content"));
-				Comment comment = new Comment();
-				comment.setId(rs.getInt("com_id"));
-				comment.setName(rs.getString("com_name"));
-				comment.setContent(rs.getString("com_content"));
-				comment.setArticleId(rs.getInt("article_id"));
-				List<Comment> commentList = new ArrayList<>();
-				commentList.add(comment);
+				commentList = new ArrayList<>();
 				article.setCommentList(commentList);
 				articleList.add(article);
-			} else {
+			} 
+			if(rs.getInt("com_id") != 0){
 				Comment comment = new Comment();
 				comment.setId(rs.getInt("com_id"));
 				comment.setName(rs.getString("com_name"));
 				comment.setContent(rs.getString("com_content"));
 				comment.setArticleId(rs.getInt("article_id"));
-				articleList.get(articleList.size() - 1).getCommentList().add(comment);
+				commentList.add(comment);
 			}
+			beforeId = rs.getInt("id");
 		}
 		return articleList;
 	};
@@ -101,7 +99,9 @@ public class ArticleRepository {
 	 * @param id 記事ID
 	 */
 	public void deleteById(int id) {
-		String sql = "delete from " + TABLE + " where id=:id";
+//		String sql = "delete from " + TABLE + " where id=:id";
+		String sql = "delete from articles as a left outer join comments as c on a.id = c.article_id "
+				+ "where a.id=:id";
 		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 		template.update(sql, param);
 	}
